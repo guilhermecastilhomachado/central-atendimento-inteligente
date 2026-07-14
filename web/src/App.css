@@ -1,0 +1,113 @@
+:root {
+  font-family: Inter, Arial, sans-serif;
+  color: #172033;
+  background: #f4f7fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.85rem 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: #5b45f0;
+  color: white;
+}
+
+.pagina-inicial {
+  min-height: 100vh;
+  padding: 4rem 8%;
+}
+
+.hero {
+  max-width: 920px;
+  padding: 3rem;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #ffffff, #eef2ff);
+  box-shadow: 0 24px 60px rgba(35, 45, 90, 0.12);
+}
+
+.etiqueta {
+  width: fit-content;
+  margin: 0 0 1rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: #e8e4ff;
+  color: #4c37d8;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.hero h1 {
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4.8rem);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.descricao {
+  max-width: 720px;
+  margin: 1.4rem 0 0;
+  color: #5d6a85;
+  font-size: 1.15rem;
+  line-height: 1.7;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.botao-secundario {
+  background: #ffffff;
+  color: #4c37d8;
+  border: 1px solid #d8d2ff;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+}
+
+.cards article {
+  padding: 1.6rem;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 16px 40px rgba(35, 45, 90, 0.08);
+}
+
+.cards h2 {
+  margin: 0;
+}
+
+.cards p {
+  color: #5d6a85;
+  line-height: 1.6;
+}
+
+@media (max-width: 800px) {
+  .pagina-inicial {
+    padding: 2rem 1rem;
+  }
+
+  .hero {
+    padding: 2rem;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
