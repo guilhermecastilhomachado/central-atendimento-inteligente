@@ -1,6 +1,8 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import { chamadoControlador } from "./controladores/chamadoControlador";
+import { chatbotControlador } from "./controladores/chatbotControlador";
 
 dotenv.config();
 
@@ -24,6 +26,9 @@ app.get("/saude", (req, res) => {
     status: "API funcionando corretamente",
   });
 });
+
+app.use("/chamados", chamadoControlador);
+app.use("/chatbot", chatbotControlador);
 
 app.listen(porta, () => {
   console.log(`API rodando em http://localhost:${porta}`);

@@ -1,0 +1,24 @@
+{
+  "name": "central-atendimento-inteligente",
+  "version": "1.0.0",
+  "description": "Sistema web de atendimento com chatbot simples, painel de chamados e API em Node.js/TypeScript.",
+  "private": true,
+  "scripts": {
+    "api:dev": "npm --prefix api run dev",
+    "api:build": "npm --prefix api run build",
+    "web:dev": "npm --prefix web run dev",
+    "web:build": "npm --prefix web run build",
+    "build": "npm --prefix api run build && npm --prefix web run build"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "nodejs",
+    "express",
+    "chatbot",
+    "api",
+    "portfolio"
+  ],
+  "author": "Guilherme Castilho Machado",
+  "license": "MIT"
+}
