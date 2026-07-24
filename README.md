@@ -46,10 +46,9 @@ central-atendimento-inteligente/
 └── README.md
 ```
 
-## Como executar
+# Como executar
 
-API
-
+## API
 ```bash
 cd api
 npm install
@@ -58,13 +57,14 @@ npm run dev
 
 A API ficará disponível em:
 
-```text
+```link
 http://localhost:3001
 ```
 
-Front-end
 
-```text
+## Front-end
+
+```bash
 cd web
 npm install
 npm run dev
@@ -72,12 +72,10 @@ npm run dev
 
 O front-end ficará disponível em:
 
-```text
+```link
 http://localhost:5173
 ```
 
-Status
+# Status
 
-```text
 Em desenvolvimento.
-```
