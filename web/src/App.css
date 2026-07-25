@@ -1,7 +1,7 @@
 :root {
-  font-family: Inter, Arial, sans-serif;
   color: #172033;
-  background: #f4f7fb;
+  background: #f3f6fb;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 * {
@@ -10,104 +10,328 @@
 
 body {
   margin: 0;
+  background: #f3f6fb;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
 button {
   border: 0;
-  border-radius: 999px;
-  padding: 0.85rem 1.4rem;
-  font-weight: 700;
   cursor: pointer;
-  background: #5b45f0;
-  color: white;
 }
 
-.pagina-inicial {
+.pagina {
   min-height: 100vh;
-  padding: 4rem 8%;
+  padding: 32px;
 }
 
 .hero {
-  max-width: 920px;
-  padding: 3rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 32px;
   border-radius: 28px;
-  background: linear-gradient(135deg, #ffffff, #eef2ff);
-  box-shadow: 0 24px 60px rgba(35, 45, 90, 0.12);
-}
-
-.etiqueta {
-  width: fit-content;
-  margin: 0 0 1rem;
-  padding: 0.45rem 0.8rem;
-  border-radius: 999px;
-  background: #e8e4ff;
-  color: #4c37d8;
-  font-weight: 700;
-  font-size: 0.9rem;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at top left, rgba(129, 140, 248, 0.6), transparent 35%),
+    linear-gradient(135deg, #172033, #243b73);
+  box-shadow: 0 24px 80px rgba(23, 32, 51, 0.22);
 }
 
 .hero h1 {
-  max-width: 720px;
-  margin: 0;
-  font-size: clamp(2.4rem, 5vw, 4.8rem);
+  margin: 8px 0;
+  font-size: clamp(2rem, 4vw, 4rem);
   line-height: 1;
-  letter-spacing: -0.05em;
 }
 
-.descricao {
+.hero p {
   max-width: 720px;
-  margin: 1.4rem 0 0;
-  color: #5d6a85;
-  font-size: 1.15rem;
-  line-height: 1.7;
+  color: #dce5ff;
+  font-size: 1.05rem;
 }
 
-.acoes {
+.tag {
+  margin: 0;
+  color: #93c5fd !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem !important;
+}
+
+.status-api {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.bolinha {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #22c55e;
+  box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.18);
+}
+
+.alerta {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 18px;
+  font-weight: 700;
+}
+
+.erro {
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+}
+
+.metricas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin: 24px 0;
+}
+
+.card-metrica {
+  padding: 24px;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 16px 48px rgba(23, 32, 51, 0.08);
+}
+
+.card-metrica span {
+  display: block;
+  color: #64748b;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.card-metrica strong {
+  color: #172033;
+  font-size: 2.4rem;
+}
+
+.grid-principal {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(360px, 0.8fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.painel {
+  padding: 24px;
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: 0 16px 48px rgba(23, 32, 51, 0.08);
+}
+
+.painel h2 {
+  margin: 0 0 6px;
+  color: #172033;
+}
+
+.painel p {
+  color: #64748b;
+}
+
+.cabecalho-painel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.cabecalho-painel select,
+.formulario input,
+.formulario textarea,
+.formulario select {
+  width: 100%;
+  border: 1px solid #dbe3f0;
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  color: #172033;
+  outline: none;
+}
+
+.lista-chamados {
+  display: grid;
+  gap: 16px;
+}
+
+.card-chamado {
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid #e5eaf3;
+  background: #fbfdff;
+}
+
+.linha-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.linha-card h3 {
+  margin: 0;
+  color: #172033;
+}
+
+.status {
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.status.aberto {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.status.em_atendimento {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.status.resolvido {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.detalhes {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 2rem;
+  gap: 10px;
+  margin-top: 14px;
 }
 
-.botao-secundario {
-  background: #ffffff;
-  color: #4c37d8;
-  border: 1px solid #d8d2ff;
+.detalhes span {
+  padding: 8px 10px;
+  border-radius: 999px;
+  color: #475569;
+  background: #eef2f7;
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
-.cards {
+.acoes-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.acoes-status button,
+.formulario button {
+  padding: 11px 14px;
+  border-radius: 14px;
+  color: #ffffff;
+  background: #2563eb;
+  font-weight: 800;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.acoes-status button:hover,
+.formulario button:hover {
+  transform: translateY(-1px);
+}
+
+.formulario {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.2rem;
-  margin-top: 1.5rem;
+  gap: 14px;
+  margin-top: 18px;
 }
 
-.cards article {
-  padding: 1.6rem;
-  border-radius: 22px;
-  background: #ffffff;
-  box-shadow: 0 16px 40px rgba(35, 45, 90, 0.08);
+.formulario label {
+  display: grid;
+  gap: 8px;
+  color: #334155;
+  font-weight: 800;
 }
 
-.cards h2 {
+.formulario textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.formulario button {
+  margin-top: 4px;
+  padding: 14px;
+}
+
+.formulario button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.coluna-lateral {
+  display: grid;
+  gap: 24px;
+}
+
+.resposta-chatbot {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 20px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+
+.resposta-chatbot h3 {
+  margin: 0 0 8px;
+}
+
+.resposta-chatbot p {
+  color: #1e3a8a;
   margin: 0;
 }
 
-.cards p {
-  color: #5d6a85;
-  line-height: 1.6;
-}
+@media (max-width: 1050px) {
+  .metricas {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-@media (max-width: 800px) {
-  .pagina-inicial {
-    padding: 2rem 1rem;
+  .grid-principal {
+    grid-template-columns: 1fr;
   }
 
   .hero {
-    padding: 2rem;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .pagina {
+    padding: 18px;
   }
 
-  .cards {
+  .metricas {
     grid-template-columns: 1fr;
+  }
+
+  .cabecalho-painel,
+  .linha-card {
+    flex-direction: column;
+  }
+
+  .status-api {
+    white-space: normal;
   }
 }
