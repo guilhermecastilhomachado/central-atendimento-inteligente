@@ -15,19 +15,19 @@ export interface Chamado {
   atualizadoEm: string;
 }
 
-export interface MetricasChamados {
-  total: number;
-  abertos: number;
-  emAtendimento: number;
-  resolvidos: number;
-}
-
 export interface NovoChamado {
   titulo: string;
   descricao: string;
   categoria: string;
   prioridade: PrioridadeChamado;
   nomeSolicitante: string;
+}
+
+export interface MetricasChamados {
+  total: number;
+  abertos: number;
+  emAtendimento: number;
+  resolvidos: number;
 }
 
 export interface RespostaChatbot {
@@ -42,10 +42,29 @@ export interface RespostaChatbot {
 
 async function tratarResposta<T>(resposta: Response): Promise<T> {
   if (!resposta.ok) {
-    throw new Error("Erro ao comunicar com a API.");
+    throw new Error("Erro na comunicação com a API.");
   }
 
-  return resposta.json();
+  return resposta.json() as Promise<T>;
+}
+
+export async function verificarSaudeApi(): Promise<boolean> {
+  try {
+    const resposta = await fetch(`${API_URL}/saude`);
+    return resposta.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function buscarChamados(status?: StatusChamado | "TODOS"): Promise<Chamado[]> {
+  const url =
+    status && status !== "TODOS"
+      ? `${API_URL}/chamados?status=${status}`
+      : `${API_URL}/chamados`;
+
+  const resposta = await fetch(url);
+  return tratarResposta<Chamado[]>(resposta);
 }
 
 export async function buscarMetricas(): Promise<MetricasChamados> {
@@ -53,19 +72,13 @@ export async function buscarMetricas(): Promise<MetricasChamados> {
   return tratarResposta<MetricasChamados>(resposta);
 }
 
-export async function buscarChamados(status?: StatusChamado): Promise<Chamado[]> {
-  const parametroStatus = status ? `?status=${status}` : "";
-  const resposta = await fetch(`${API_URL}/chamados${parametroStatus}`);
-  return tratarResposta<Chamado[]>(resposta);
-}
-
-export async function criarChamado(novoChamado: NovoChamado): Promise<Chamado> {
+export async function criarChamado(dados: NovoChamado): Promise<Chamado> {
   const resposta = await fetch(`${API_URL}/chamados`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(novoChamado),
+    body: JSON.stringify(dados),
   });
 
   return tratarResposta<Chamado>(resposta);
@@ -86,9 +99,7 @@ export async function atualizarStatusChamado(
   return tratarResposta<Chamado>(resposta);
 }
 
-export async function enviarMensagemChatbot(
-  mensagem: string
-): Promise<RespostaChatbot> {
+export async function enviarMensagemChatbot(mensagem: string): Promise<RespostaChatbot> {
   const resposta = await fetch(`${API_URL}/chatbot/mensagem`, {
     method: "POST",
     headers: {

@@ -8,6 +8,7 @@ import {
   buscarMetricas,
   criarChamado,
   enviarMensagemChatbot,
+  verificarSaudeApi,
 } from "./services/api";
 
 import type {
@@ -37,23 +38,47 @@ function App() {
   const [respostaChatbot, setRespostaChatbot] = useState<RespostaChatbot | null>(null);
 
   const [carregando, setCarregando] = useState(false);
-  const [erro, setErro] = useState("");
+
+  const [apiOnline, setApiOnline] = useState(false);
+  const [mensagemFeedback, setMensagemFeedback] = useState("");
+  const [tipoFeedback, setTipoFeedback] = useState<"sucesso" | "erro" | "info">("info");
+
+  function exibirFeedback(
+    mensagem: string,
+    tipo: "sucesso" | "erro" | "info" = "info"
+  ) {
+    setMensagemFeedback(mensagem);
+    setTipoFeedback(tipo);
+
+    window.setTimeout(() => {
+      setMensagemFeedback("");
+    }, 4000);
+  }
 
   async function carregarDados() {
     try {
-      setErro("");
+      const apiEstaOnline = await verificarSaudeApi();
+      setApiOnline(apiEstaOnline);
 
-      const status = filtroStatus === "TODOS" ? undefined : filtroStatus;
+      if (!apiEstaOnline) {
+        setMetricas(null);
+        setChamados([]);
+        exibirFeedback("Não foi possível conectar à API. Verifique se o servidor está rodando.", "erro");
+        return;
+      }
 
-      const [metricasApi, chamadosApi] = await Promise.all([
+      const [chamadosApi, metricasApi] = await Promise.all([
+        buscarChamados(filtroStatus),
         buscarMetricas(),
-        buscarChamados(status),
       ]);
 
-      setMetricas(metricasApi);
       setChamados(chamadosApi);
+      setMetricas(metricasApi);
     } catch {
-      setErro("Não foi possível carregar os dados da API.");
+      setApiOnline(false);
+      setMetricas(null);
+      setChamados([]);
+      exibirFeedback("Não foi possível carregar os dados da API.", "erro");
     }
   }
 
@@ -66,14 +91,15 @@ function App() {
 
     try {
       setCarregando(true);
-      setErro("");
 
       await criarChamado(novoChamado);
 
       setNovoChamado(chamadoInicial);
+      exibirFeedback("Chamado criado com sucesso.", "sucesso");
+
       await carregarDados();
     } catch {
-      setErro("Não foi possível criar o chamado.");
+      exibirFeedback("Não foi possível criar o chamado. Verifique os dados e tente novamente.", "erro");
     } finally {
       setCarregando(false);
     }
@@ -81,11 +107,20 @@ function App() {
 
   async function aoAtualizarStatus(id: number, status: StatusChamado) {
     try {
-      setErro("");
       await atualizarStatusChamado(id, status);
+      
+      const statusFormatado =
+        status === "ABERTO"
+          ? "aberto"
+          : status === "EM_ATENDIMENTO"
+            ? "em atendimento"
+            : "resolvido";
+
+      exibirFeedback(`Status do chamado atualizado para ${statusFormatado}.`, "sucesso");
+
       await carregarDados();
     } catch {
-      setErro("Não foi possível atualizar o status do chamado.");
+      exibirFeedback("Não foi possível atualizar o status do chamado.", "erro");
     }
   }
 
@@ -93,15 +128,16 @@ function App() {
     evento.preventDefault();
 
     if (!mensagemChatbot.trim()) {
+      exibirFeedback("Digite uma mensagem antes de enviar para o chatbot.", "info");
       return;
     }
 
     try {
       setCarregando(true);
-      setErro("");
 
       const resposta = await enviarMensagemChatbot(mensagemChatbot);
       setRespostaChatbot(resposta);
+      exibirFeedback("Sugestão do chatbot gerada com sucesso.", "sucesso");
 
       if (resposta.deveAbrirChamado) {
         setNovoChamado((chamadoAtual) => ({
@@ -113,7 +149,7 @@ function App() {
         }));
       }
     } catch {
-      setErro("Não foi possível enviar a mensagem para o chatbot.");
+      exibirFeedback("Não foi possível consultar o chatbot.", "erro");
     } finally {
       setCarregando(false);
     }
@@ -138,13 +174,17 @@ function App() {
           </p>
         </div>
 
-        <div className="status-api">
-          <span className="bolinha"></span>
-          API conectada em localhost:3001
+        <div className={apiOnline ? "status-api online" : "status-api offline"}>
+          <span className="bolinha-status"></span>
+          {apiOnline ? "API conectada em localhost:3001" : "API indisponível"}
         </div>
       </section>
 
-      {erro && <div className="alerta erro">{erro}</div>}
+      {mensagemFeedback && (
+        <div className={`feedback feedback-${tipoFeedback}`}>
+          {mensagemFeedback}
+        </div>
+      )}
 
       <section className="metricas">
         <article className="card-metrica">
