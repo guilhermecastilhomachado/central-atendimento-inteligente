@@ -1,7 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import { chamadoControlador } from "./controladores/chamadoControlador";
+import chamadoControlador from "./controladores/chamadoControlador";
 import { chatbotControlador } from "./controladores/chatbotControlador";
 
 dotenv.config();

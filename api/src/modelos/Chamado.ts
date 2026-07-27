@@ -10,18 +10,14 @@ export interface Chamado {
   prioridade: PrioridadeChamado;
   status: StatusChamado;
   nomeSolicitante: string;
-  criadoEm: string;
-  atualizadoEm: string;
+  criadoEm: Date;
+  atualizadoEm: Date;
 }
 
-export interface CriarChamadoEntrada {
+export interface NovoChamado {
   titulo: string;
   descricao: string;
   categoria: string;
   prioridade: PrioridadeChamado;
   nomeSolicitante: string;
-}
-
-export interface AtualizarStatusEntrada {
-  status: StatusChamado;
 }

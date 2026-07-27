@@ -1,8 +1,20 @@
 node_modules/
 dist/
-build/
 .env
-.DS_Store
+.env.local
 
-.vscode/
-.idea/
+api/node_modules/
+api/dist/
+api/.env
+api/prisma/dev.db
+api/prisma/dev.db-journal
+
+web/node_modules/
+web/dist/
+
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
+
+*.log
