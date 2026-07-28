@@ -14,6 +14,13 @@ function contemAlgumaPalavra(texto: string, palavras: string[]): boolean {
   return palavras.some((palavra) => texto.includes(palavra));
 }
 
+/**
+ * A ordem das verificações abaixo define a precedência da triagem.
+ * Regras mais específicas vêm antes das mais genéricas: "acesso" é avaliado
+ * antes de "dados" para que "não consigo acessar meus dados" seja classificado
+ * como problema de acesso, e não como integração.
+ */
+
 export function gerarRespostaChatbot(mensagem: string): RespostaChatbot {
   const mensagemNormalizada = mensagem.toLowerCase().trim();
 
@@ -26,7 +33,13 @@ export function gerarRespostaChatbot(mensagem: string): RespostaChatbot {
       "senha",
       "login",
       "acesso",
+      "acessar",
+      "acessa",
       "entrar",
+      "logar",
+      "conta",
+      "permissao",
+      "permissão",
       "usuario",
       "usuário",
     ])

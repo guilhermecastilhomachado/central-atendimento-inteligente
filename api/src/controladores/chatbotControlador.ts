@@ -7,11 +7,17 @@ chatbotControlador.post("/mensagem", (req, res) => {
   try {
     const { mensagem } = req.body;
 
+    if (typeof mensagem !== "string") {
+      return res.status(400).json({
+        mensagem: "O campo 'mensagem' é obrigatório e deve ser um texto.",
+      });
+    }
+
     const resposta = gerarRespostaChatbot(mensagem);
 
-    res.json(resposta);
+    return res.json(resposta);
   } catch (erro) {
-    res.status(400).json({
+    return res.status(400).json({
       mensagem:
         erro instanceof Error
           ? erro.message
