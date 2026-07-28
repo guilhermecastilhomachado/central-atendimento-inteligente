@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:3001";
+// Endereço da API lido do ambiente (o Vite expõe apenas variáveis com prefixo VITE_).
+// O fallback mantém o projeto funcionando sem .env em desenvolvimento local.
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
 
 export type StatusChamado = "ABERTO" | "EM_ATENDIMENTO" | "RESOLVIDO";
 export type PrioridadeChamado = "BAIXA" | "MEDIA" | "ALTA";
