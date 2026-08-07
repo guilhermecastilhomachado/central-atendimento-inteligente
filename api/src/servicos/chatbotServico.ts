@@ -1,3 +1,4 @@
+import { AppError } from "../erros/AppError";
 import { PrioridadeChamado } from "../modelos/Chamado";
 
 interface RespostaChatbot {
@@ -25,7 +26,10 @@ export function gerarRespostaChatbot(mensagem: string): RespostaChatbot {
   const mensagemNormalizada = mensagem.toLowerCase().trim();
 
   if (!mensagemNormalizada) {
-    throw new Error("A mensagem não pode estar vazia.");
+    // Guarda defensiva: o schema Zod já barra mensagem vazia na borda da API.
+    // A checagem permanece porque o serviço também pode ser chamado a partir
+    // de um teste ou de um script, sem passar pelo controlador.
+    throw AppError.requisicaoInvalida("A mensagem não pode estar vazia.");
   }
 
   if (

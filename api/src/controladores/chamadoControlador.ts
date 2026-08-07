@@ -6,155 +6,84 @@ import {
   criarChamado,
   listarChamados,
 } from "../servicos/chamadoServico";
-import type { NovoChamado, PrioridadeChamado, StatusChamado } from "../modelos/Chamado";
+import { AppError } from "../erros/AppError";
+import {
+  atualizarStatusSchema,
+  criarChamadoSchema,
+  idParamSchema,
+  listarChamadosQuerySchema,
+} from "../validacao/chamadoSchemas";
 
 const chamadoControlador = Router();
 
-const statusPermitidos: StatusChamado[] = ["ABERTO", "EM_ATENDIMENTO", "RESOLVIDO"];
-const prioridadesPermitidas: PrioridadeChamado[] = ["BAIXA", "MEDIA", "ALTA"];
+/**
+ * Nenhuma rota deste arquivo usa try/catch.
+ *
+ * O pacote `express-async-errors`, importado uma única vez em `app.ts`,
+ * encaminha qualquer exceção lançada dentro de uma rota assíncrona para o
+ * tratador global de erros. O controlador só precisa descrever o caminho
+ * feliz e lançar um AppError quando a regra não for satisfeita.
+ */
 
-function ehStatusValido(status: string): status is StatusChamado {
-  return statusPermitidos.includes(status as StatusChamado);
-}
-
-function ehPrioridadeValida(prioridade: string): prioridade is PrioridadeChamado {
-  return prioridadesPermitidas.includes(prioridade as PrioridadeChamado);
-}
-
-function textoValido(valor: unknown): valor is string {
-  return typeof valor === "string" && valor.trim().length > 0;
-}
-
+/** GET /chamados — lista os chamados, opcionalmente filtrados por status. */
 chamadoControlador.get("/", async (req, res) => {
-  try {
-    const status = req.query.status as string | undefined;
+  const { status } = listarChamadosQuerySchema.parse(req.query);
 
-    if (status && !ehStatusValido(status)) {
-      return res.status(400).json({
-        mensagem: "Status informado é inválido.",
-        statusPermitidos,
-      });
-    }
+  const chamados = await listarChamados(status);
 
-    const chamados = await listarChamados(status as StatusChamado | undefined);
-    return res.json(chamados);
-  } catch {
-    return res.status(500).json({
-      mensagem: "Erro interno ao listar chamados.",
-    });
-  }
+  res.json(chamados);
 });
 
+/**
+ * GET /chamados/metricas/resumo — contagem agregada por status.
+ *
+ * Precisa ser declarada ANTES de GET /:id. O Express avalia as rotas na ordem
+ * em que foram registradas, e "/:id" casaria com "/metricas", fazendo a
+ * requisição cair na rota errada.
+ */
 chamadoControlador.get("/metricas/resumo", async (_req, res) => {
-  try {
-    const metricas = await buscarMetricas();
-    return res.json(metricas);
-  } catch {
-    return res.status(500).json({
-      mensagem: "Erro interno ao buscar métricas dos chamados.",
-    });
-  }
+  const metricas = await buscarMetricas();
+
+  res.json(metricas);
 });
 
+/** GET /chamados/:id — busca um chamado específico. */
 chamadoControlador.get("/:id", async (req, res) => {
-  try {
-    const id = Number(req.params.id);
+  const { id } = idParamSchema.parse(req.params);
 
-    if (Number.isNaN(id)) {
-      return res.status(400).json({
-        mensagem: "ID informado é inválido.",
-      });
-    }
+  const chamado = await buscarChamadoPorId(id);
 
-    const chamado = await buscarChamadoPorId(id);
-
-    if (!chamado) {
-      return res.status(404).json({
-        mensagem: "Chamado não encontrado.",
-      });
-    }
-
-    return res.json(chamado);
-  } catch {
-    return res.status(500).json({
-      mensagem: "Erro interno ao buscar chamado.",
-    });
+  if (!chamado) {
+    throw AppError.naoEncontrado(`Chamado ${id} não encontrado.`);
   }
+
+  res.json(chamado);
 });
 
+/** POST /chamados — cria um chamado. */
 chamadoControlador.post("/", async (req, res) => {
-  try {
-    const { titulo, descricao, categoria, prioridade, nomeSolicitante } = req.body;
+  // `parse` devolve os dados já validados, convertidos e tipados.
+  // Se algo estiver errado, ele lança um ZodError que vira 400 no
+  // tratador global, com a lista de campos inválidos.
+  const dados = criarChamadoSchema.parse(req.body);
 
-    if (
-      !textoValido(titulo) ||
-      !textoValido(descricao) ||
-      !textoValido(categoria) ||
-      !textoValido(prioridade) ||
-      !textoValido(nomeSolicitante)
-    ) {
-      return res.status(400).json({
-        mensagem: "Todos os campos são obrigatórios.",
-      });
-    }
+  const chamadoCriado = await criarChamado(dados);
 
-    if (!ehPrioridadeValida(prioridade)) {
-      return res.status(400).json({
-        mensagem: "Prioridade informada é inválida.",
-        prioridadesPermitidas,
-      });
-    }
-
-    const novoChamado: NovoChamado = {
-      titulo: titulo.trim(),
-      descricao: descricao.trim(),
-      categoria: categoria.trim(),
-      prioridade,
-      nomeSolicitante: nomeSolicitante.trim(),
-    };
-
-    const chamadoCriado = await criarChamado(novoChamado);
-
-    return res.status(201).json(chamadoCriado);
-  } catch {
-    return res.status(500).json({
-      mensagem: "Erro interno ao criar chamado.",
-    });
-  }
+  res.status(201).json(chamadoCriado);
 });
 
+/** PATCH /chamados/:id/status — altera o status de um chamado. */
 chamadoControlador.patch("/:id/status", async (req, res) => {
-  try {
-    const id = Number(req.params.id);
-    const { status } = req.body;
+  const { id } = idParamSchema.parse(req.params);
+  const { status } = atualizarStatusSchema.parse(req.body);
 
-    if (Number.isNaN(id)) {
-      return res.status(400).json({
-        mensagem: "ID informado é inválido.",
-      });
-    }
+  const chamadoAtualizado = await atualizarStatusChamado(id, status);
 
-    if (!textoValido(status) || !ehStatusValido(status)) {
-      return res.status(400).json({
-        mensagem: "Status informado é inválido.",
-        statusPermitidos,
-      });
-    }
-
-    const chamadoAtualizado = await atualizarStatusChamado(id, status);
-
-    if (!chamadoAtualizado) {
-      return res.status(404).json({
-        mensagem: "Chamado não encontrado.",
-      });
-    }
-
-    return res.json(chamadoAtualizado);
-  } catch {
-    return res.status(500).json({
-      mensagem: "Erro interno ao atualizar status do chamado.",
-    });
+  if (!chamadoAtualizado) {
+    throw AppError.naoEncontrado(`Chamado ${id} não encontrado.`);
   }
+
+  res.json(chamadoAtualizado);
 });
 
 export default chamadoControlador;
