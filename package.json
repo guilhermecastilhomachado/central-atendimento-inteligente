@@ -9,7 +9,9 @@
     "web:dev": "npm --prefix web run dev",
     "web:build": "npm --prefix web run build",
     "dev": "concurrently -n API,WEB -c blue,green \"npm run api:dev\" \"npm run web:dev\"",
-    "build": "npm --prefix api run build && npm --prefix web run build"
+    "build": "npm --prefix api run build && npm --prefix web run build",
+    "test": "npm --prefix api run test",
+    "typecheck": "npm --prefix api run typecheck && npm --prefix web run build"
   },
   "keywords": [
     "react",
@@ -18,7 +20,11 @@
     "express",
     "chatbot",
     "api",
-    "portfolio"
+    "portfolio",
+    "zod",
+    "vitest",
+    "swagger",
+    "openapi"
   ],
   "author": "Guilherme Castilho Machado",
   "license": "MIT",
